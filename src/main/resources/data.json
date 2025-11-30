@@ -1,0 +1,27 @@
+[
+  {
+    "word": "apel",
+    "definition": "Buah berwarna merah yang manis",
+    "gimmick": "NONE"
+  },
+  {
+    "word": "barrel",
+    "definition": "Tong kayu besar berbentuk silinder",
+    "gimmick": "ROTATE"
+  },
+  {
+    "word": "earthquake",
+    "definition": "Guncangan tiba-tiba pada permukaan bumi",
+    "gimmick": "SHAKE"
+  },
+  {
+    "word": "lost",
+    "definition": "Keadaan tidak tahu arah atau hilang",
+    "gimmick": "FADE"
+  },
+  {
+    "word": "calculator",
+    "definition": "Alat untuk menghitung angka",
+    "gimmick": "OPEN_CALCULATOR"
+  }
+]
