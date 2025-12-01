@@ -19,13 +19,8 @@ public class MainApp extends Application {
 
         RBHashMap dictionary = new RBHashMap(100);
 
-        dictionary.put("apel", "Buah berwarna merah", null);
-        dictionary.put("java", "Bahasa pemrograman yang kuat", null);
-
-        dictionary.put("barrel", "Tong kayu besar", GimmickLibrary.ROTATE); // Trigger putar
-        dictionary.put("earthquake", "Guncangan tanah", GimmickLibrary.SHAKE);   // Trigger getar
-        dictionary.put("lost", "Tidak terlihat", GimmickLibrary.FADE);    // Trigger hilang
-        dictionary.put("calculator", "Kalkulator", GimmickLibrary.OPEN_CALCULATOR);
+        // Panggil DataLoader untuk mengisi kamus secara otomatis
+        DataLoader.loadFromJSON(dictionary);
 
         TextField searchField = new TextField();
 
