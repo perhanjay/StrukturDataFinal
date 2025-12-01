@@ -15,6 +15,16 @@
     "gimmick": "SHAKE"
   },
   {
+    "word": "python",
+    "definition": "Bahasa pemrograman populer yang bisa dijalankan di sini.",
+    "gimmick": "OPEN_NOTEPAD"
+  },
+  {
+    "word": "notepad",
+    "definition": "Aplikasi catatan kecil.",
+    "gimmick": "OPEN_NOTEPAD"
+  },
+  {
     "word": "lost",
     "definition": "Keadaan tidak tahu arah atau hilang",
     "gimmick": "FADE"
@@ -43,5 +53,30 @@
     "word": "kangaroo",
     "definition": "Hewan berkantung yang suka melompat.",
     "gimmick": "BOUNCE"
+  },
+  {
+    "word": "blur",
+    "definition": "Roh halus yang tak kasat mata.",
+    "gimmick": "BLUR"
+  },
+  {
+    "word": "dizzy",
+    "definition": "Sensasi berputar atau kehilangan keseimbangan.",
+    "gimmick": "WOBBLE"
+  },
+  {
+    "word": "slime",
+    "definition": "Cairan kental yang lengket dan kenyal.",
+    "gimmick": "JELLO"
+  },
+  {
+    "word": "ghost",
+    "definition": "Hati-hati di belakangmu...",
+    "gimmick": "JUMPSCARE"
+  },
+  {
+    "word": "burung",
+    "definition": "Hewan bersayap yang bisa terbang (Klik gambar untuk menutup).",
+    "gimmick": "SHOW_BURUNG"
   }
 ]
