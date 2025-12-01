@@ -56,6 +56,12 @@ public class DataLoader {
             case "FLIP":   return GimmickLibrary.FLIP;
             case "DISCO":  return GimmickLibrary.DISCO;
             case "BOUNCE": return GimmickLibrary.BOUNCE;
+            case "OPEN_NOTEPAD": return GimmickLibrary.OPEN_NOTEPAD;
+            case "BLUR":   return GimmickLibrary.BLUR;
+            case "WOBBLE": return GimmickLibrary.WOBBLE;
+            case "JELLO":  return GimmickLibrary.JELLO;
+            case "JUMPSCARE": return GimmickLibrary.JUMPSCARE;
+            case "SHOW_BURUNG": return GimmickLibrary.SHOW_BURUNG;
             default: return null; // Jika "NONE" atau typo, return null
         }
     }
