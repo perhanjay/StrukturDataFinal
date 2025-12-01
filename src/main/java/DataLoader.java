@@ -52,6 +52,10 @@ public class DataLoader {
             case "SHAKE":  return GimmickLibrary.SHAKE;
             case "FADE":   return GimmickLibrary.FADE;
             case "OPEN_CALCULATOR": return GimmickLibrary.OPEN_CALCULATOR;
+            case "PULSE":  return GimmickLibrary.PULSE;
+            case "FLIP":   return GimmickLibrary.FLIP;
+            case "DISCO":  return GimmickLibrary.DISCO;
+            case "BOUNCE": return GimmickLibrary.BOUNCE;
             default: return null; // Jika "NONE" atau typo, return null
         }
     }

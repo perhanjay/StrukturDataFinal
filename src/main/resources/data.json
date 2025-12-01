@@ -23,5 +23,25 @@
     "word": "calculator",
     "definition": "Alat untuk menghitung angka",
     "gimmick": "OPEN_CALCULATOR"
+  },
+  {
+    "word": "heart",
+    "definition": "Organ tubuh yang memompa darah.",
+    "gimmick": "PULSE"
+  },
+  {
+    "word": "party",
+    "definition": "Pesta perayaan.",
+    "gimmick": "DISCO"
+  },
+  {
+    "word": "mirror",
+    "definition": "Permukaan yang memantulkan bayangan.",
+    "gimmick": "FLIP"
+  },
+    {
+    "word": "kangaroo",
+    "definition": "Hewan berkantung yang suka melompat.",
+    "gimmick": "BOUNCE"
   }
 ]
