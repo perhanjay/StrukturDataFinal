@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class RBTree {
 
     // Konstanta Warna
@@ -169,5 +171,29 @@ public class RBTree {
             printRecursive(node.left, indent, false);
             printRecursive(node.right, indent, true);
         }
+    }
+
+    public void collectSuggestions(String prefix, List<Suggestion> results, int limit) {
+        collectRecursive(root, prefix, results, limit);
+    }
+
+    private void collectRecursive(Node node, String prefix, List<Suggestion> results, int limit) {
+        // Berhenti jika node kosong atau kuota saran sudah terpenuhi (misal: 8 kata)
+        if (node == null || results.size() >= limit) return;
+
+        // 1. Cek Anak Kiri Dulu (Agar urut abjad dari A-Z)
+        collectRecursive(node.left, prefix, results, limit);
+
+        // Cek lagi kuota setelah kembali dari kiri
+        if (results.size() >= limit) return;
+
+        // 2. Cek Node Ini: Apakah kuncinya diawali dengan teks pencarian?
+        // Kita gunakan toLowerCase() agar pencarian tidak sensitif huruf besar/kecil
+        if (node.key.toLowerCase().startsWith(prefix.toLowerCase())) {
+            results.add(new Suggestion(node.key, node.value, node.gimmick));
+        }
+
+        // 3. Cek Anak Kanan
+        collectRecursive(node.right, prefix, results, limit);
     }
 }
