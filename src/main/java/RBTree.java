@@ -26,15 +26,21 @@ public class RBTree {
         this.root = null;
     }
 
+    public SearchResult get(String key){
+        Node node = search(key);
+        return node != null ?  new SearchResult(node.value, node.gimmick) : null;
+    }
+
     // --- PUBLIC METHODS (Yang dipanggil oleh HashMap) ---
 
     // 1. Mencari Data
-    public SearchResult search(String key) {
+    public Node search(String key) {
         Node current = root;
         while (current != null) {
             int cmp = key.compareTo(current.key);
             if (cmp == 0) {
-                return new SearchResult(current.value, current.gimmick);
+//                return new SearchResult(current.value, current.gimmick);
+                return current;
             }
             else if (cmp < 0) current = current.left;
             else current = current.right;

@@ -1,3 +1,4 @@
+import javafx.animation.*;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -10,27 +11,30 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.animation.Timeline;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Interpolator;
 import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 
 public class MainApp extends Application {
 
     // DEFINISI FONT STACK (San Francisco -> Segoe UI -> Sans Serif)
     private static final String FONT_STYLE = "-fx-font-family: 'SF Pro Display', 'San Francisco', 'Segoe UI', sans-serif;";
 
+    private RBTree dictionary;
+
     @Override
     public void start(Stage stage) {
 
-        RBHashMap dictionary = new RBHashMap(100);
-        DataLoader.loadFromJSON(dictionary);
+//        RBHashMap dictionary = new RBHashMap(100);
+
+//        DataLoader.loadFromJSON(dictionary);
+        dictionary = new RBTree();
+
+        populateData();
 
         // --- UI COMPONENTS ---
 
         // Header Title
-        Label titleLabel = new Label("Kamus Sakti Loh Yah😹");
+        Label titleLabel = new Label("Kamus Sakti");
         // Kita gunakan CSS untuk size & weight agar Font Family mengikuti Root
         titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #333333;");
         titleLabel.setPadding(new Insets(0, 0, 5, 0));
@@ -119,7 +123,7 @@ public class MainApp extends Application {
 
             if (hasil != null) {
                 resultLabel.setText(hasil.definition);
-                resultLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #333333;"); // Reset warna
+                resultLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #333333;");
                 if(hasil.gimmick != null) hasil.gimmick.execute(root);
             } else {
                 resultLabel.setText("Maaf, kata \"" + query + "\" tidak ditemukan.");
@@ -136,5 +140,17 @@ public class MainApp extends Application {
 
     public static void main(String[] args) {
         launch();
+    }
+
+    public void populateData(){
+        dictionary.insert("apple", "apel", null);
+
+        dictionary.insert("barrel", "tong kayu", (node) -> {
+            RotateTransition rt = new RotateTransition(Duration.seconds(1), node);
+            rt.setByAngle(360);
+            rt.play();
+        });
+
+
     }
 }
