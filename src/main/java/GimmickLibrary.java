@@ -191,45 +191,58 @@ public class GimmickLibrary {
         tt.play();
     };
 
-    public static final Gimmick SHOW_BURUNG = (node) -> {
-        // Cek apakah node target adalah Pane (container)
-        if (!(node instanceof Pane)) return;
-        Pane root = (Pane) node;
+public static final Gimmick GRAVITY = (node) -> {
+    // Memastikan targetNode adalah container (seperti Pane, VBox, dsb.)
+    if (node instanceof Pane) {
+        Pane container = (Pane) node;
 
-        try {
-            String imagePath = "/burung_kawin.png"; // Nama file di resources
+        // Loop melalui semua elemen anak di dalam container
+        for (Node child : container.getChildren()) {
             
-            // Cek safety: apakah file ada?
-            if (GimmickLibrary.class.getResource(imagePath) == null) {
-                System.err.println("ERROR: Gambar " + imagePath + " tidak ditemukan di resources!");
-                return;
-            }
+            // 1. Catat posisi Y awal elemen.
+            // Posisi awal = layoutY (posisi dalam parent) + translateY (offset animasi yang sudah ada)
+            final double originalY = child.getLayoutY() + child.getTranslateY();
+            
+            // Random rotasi saat jatuh
+            final double randomRotation = 360 + (Math.random() * 360);
 
-            // 1. Muat Gambar
-            Image img = new Image(GimmickLibrary.class.getResourceAsStream(imagePath));
-            ImageView imageView = new ImageView(img);
+            // Kita menggunakan Timeline untuk mengurutkan animasi: Jatuh -> Tunda -> Kembali
+            Timeline timeline = new Timeline(
+                // KeyFrame 1: Posisi Awal (Waktu 0)
+                new KeyFrame(Duration.ZERO, 
+                    // Reset posisi Y dan rotasi (penting agar animasi dimulai dari posisi yang benar)
+                    new KeyValue(child.translateYProperty(), originalY),
+                    new KeyValue(child.rotateProperty(), 0.0)
+                ),
+                
+                // KeyFrame 2: Posisi Jatuh Maksimum (Waktu 1.0 detik)
+                new KeyFrame(Duration.seconds(1.0), 
+                    // Pindah ke bawah 1000.0px. EASE_IN memberikan efek percepatan gravitasi.
+                    new KeyValue(child.translateYProperty(), 1000.0, Interpolator.EASE_IN),
+                    new KeyValue(child.rotateProperty(), randomRotation)
+                ),
+                
+                // KeyFrame 3: Tunggu sebentar di bawah (Durasi 1.5 detik)
+                new KeyFrame(Duration.seconds(1.5)), 
+                
+                // KeyFrame 4: Kembali ke Posisi Awal (Waktu 2.0 detik)
+                new KeyFrame(Duration.seconds(2.0), 
+                    // Kembali ke originalY. EASE_OUT memberikan efek pantulan kecil.
+                    new KeyValue(child.translateYProperty(), originalY, Interpolator.EASE_OUT),
+                    new KeyValue(child.rotateProperty(), 0.0) // Kembali ke rotasi 0
+                )
+            );
 
-            // 2. Atur ukuran agar pas di layar 400x600
-            imageView.setFitWidth(380);  // Sedikit margin dari lebar 400
-            imageView.setPreserveRatio(true); // Jaga proporsi gambar agar tidak gepeng
+            timeline.play();
 
-            // 3. Buat Container Overlay (Latar belakang gelap transparan)
-            StackPane overlayContainer = new StackPane(imageView);
-            overlayContainer.setStyle("-fx-background-color: rgba(0,0,0,0.8);"); // Hitam transparan 80%
-            overlayContainer.setPrefSize(400, 600); // Ukuran full window
-
-            // 4. Event: Klik gambar untuk menutupnya
-            overlayContainer.setOnMouseClicked(e -> {
-                root.getChildren().remove(overlayContainer);
-            });
-
-            // 5. Tampilkan (Tambahkan ke root paling atas)
-            root.getChildren().add(overlayContainer);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Gagal memuat gambar burung.");
+            // Penting: Setelah semua selesai, pastikan rotasi di-reset ke nol
+            timeline.setOnFinished(e -> child.setRotate(0.0));
         }
-    };
-    
+    } else {
+        // Jika node adalah elemen tunggal
+        // Anda bisa menambahkan logika fall & reset untuk node tunggal di sini jika perlu.
+        System.out.println("Gimmick GRAVITY ditujukan untuk container Pane/VBox. Node tunggal diabaikan.");
+    }
+};
+
 }
