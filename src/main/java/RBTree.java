@@ -161,4 +161,27 @@ public class RBTree {
             printRecursive(node.right, indent, true);
         }
     }
+
+    public void collectSuggestions(String prefix, java.util.List<Suggestion> results, int limit) {
+        collectRecursive(root, prefix, results, limit);
+    }
+
+    private void collectRecursive(Node node, String prefix, java.util.List<Suggestion> results, int limit) {
+        // Stop jika node kosong atau kuota hasil sudah penuh
+        if (node == null || results.size() >= limit) return;
+
+        // 1. Cek Kiri Dulu (In-Order Traversal agar urut abjad lokal)
+        collectRecursive(node.left, prefix, results, limit);
+
+        // Cek lagi kuota setelah kembali dari kiri
+        if (results.size() >= limit) return;
+
+        // 2. Cek Node Ini
+        if (node.key.startsWith(prefix)) {
+            results.add(new Suggestion(node.key, node.value, node.gimmick));
+        }
+
+        // 3. Cek Kanan
+        collectRecursive(node.right, prefix, results, limit);
+    }
 }

@@ -100,12 +100,45 @@ public class GimmickLibrary {
 
     // 2. EFEK WOBBLE (GOYANG PUSING)
     public static final Gimmick WOBBLE = (node) -> {
-        RotateTransition rt = new RotateTransition(Duration.millis(100), node);
-        rt.setFromAngle(-5);
-        rt.setToAngle(5);
-        rt.setCycleCount(10); // Goyang 10 kali
+        // 1. EFEK GOYANG CEPAT (Kepala pusing)
+        RotateTransition rt = new RotateTransition(Duration.millis(150), node);
+        rt.setFromAngle(-4); // Miring kiri
+        rt.setToAngle(4);    // Miring kanan
+        rt.setCycleCount(30); // Berlangsung sekitar 4.5 detik
         rt.setAutoReverse(true);
+
+        // 2. EFEK PENGLIHATAN KABUR (Blur in-and-out)
+        // Menggunakan GaussianBlur untuk mensimulasikan mata yang sulit fokus
+        javafx.scene.effect.GaussianBlur blur = new javafx.scene.effect.GaussianBlur(0);
+        node.setEffect(blur);
+        
+        Timeline blurTimeline = new Timeline(
+            new KeyFrame(Duration.ZERO, new KeyValue(blur.radiusProperty(), 0)),
+            new KeyFrame(Duration.seconds(1.0), new KeyValue(blur.radiusProperty(), 8)), // Menjadi buram
+            new KeyFrame(Duration.seconds(2.0), new KeyValue(blur.radiusProperty(), 0))  // Kembali jelas
+        );
+        blurTimeline.setCycleCount(2); // Ulangi 2 kali siklus buram
+        blurTimeline.setAutoReverse(false);
+
+        // 3. EFEK DISORIENTASI (Slow Zoom/Breathing)
+        ScaleTransition st = new ScaleTransition(Duration.seconds(2.25), node);
+        st.setFromX(1.0); st.setFromY(1.0);
+        st.setToX(1.05);  st.setToY(1.05); // Zoom in sedikit (5%)
+        st.setCycleCount(2);
+        st.setAutoReverse(true);
+
+        // --- Jalankan Semua Efek ---
         rt.play();
+        blurTimeline.play();
+        st.play();
+
+        // --- Cleanup (Penting agar UI kembali tajam) ---
+        rt.setOnFinished(e -> {
+            node.setRotate(0);
+            node.setScaleX(1.0);
+            node.setScaleY(1.0);
+            node.setEffect(null); // Hapus blur sepenuhnya
+        });
     };
 
     // 3. EFEK JELLO (KENYAL)
@@ -129,18 +162,51 @@ public class GimmickLibrary {
 
     // 3. EFEK DISCO / WARNA-WARNI (ColorAdjust)
     public static final Gimmick DISCO = (node) -> {
-        ColorAdjust colorAdjust = new ColorAdjust();
-        node.setEffect(colorAdjust);
+        // Kita butuh akses ke method setStyle, jadi cast ke Region
+        if (!(node instanceof javafx.scene.layout.Region)) return;
+        javafx.scene.layout.Region region = (javafx.scene.layout.Region) node;
 
-        Timeline timeline = new Timeline(
-            new KeyFrame(Duration.ZERO, new KeyValue(colorAdjust.hueProperty(), -1)),
-            new KeyFrame(Duration.seconds(0.5), new KeyValue(colorAdjust.hueProperty(), 1))
+        // Simpan style lama agar bisa dikembalikan nanti
+        String originalStyle = region.getStyle();
+
+        // 1. ANIMASI WARNA-WARNI (Strobe Light)
+        // Kita ubah background color setiap 0.15 detik
+        Timeline colorTimeline = new Timeline(
+            new KeyFrame(Duration.seconds(0.15), e -> {
+                // Generate warna acak yang cerah (Hue 0-360, Saturation 1.0, Brightness 1.0)
+                String randomColor = "hsb(" + (Math.random() * 360) + ", 100%, 100%)";
+                // Terapkan background baru (pertahankan font style jika ada di root, tapi di MainApp kita aman)
+                region.setStyle("-fx-background-color: " + randomColor + ";");
+            })
         );
-        timeline.setCycleCount(6);
-        timeline.setAutoReverse(true);
-        // Reset efek setelah selesai agar warna kembali normal
-        timeline.setOnFinished(e -> node.setEffect(null)); 
-        timeline.play();
+        colorTimeline.setCycleCount(20); // Berlangsung sekitar 3 detik (20 * 0.15)
+        
+        // 2. ANIMASI DENYUT (Pulsing Scale)
+        ScaleTransition st = new ScaleTransition(Duration.seconds(0.3), node);
+        st.setByX(0.05); // Membesar 5%
+        st.setByY(0.05);
+        st.setCycleCount(10); // 5 kali denyut (karena AutoReverse)
+        st.setAutoReverse(true);
+
+        // 3. ANIMASI GOYANG (Rocking Rotate)
+        RotateTransition rt = new RotateTransition(Duration.seconds(0.15), node);
+        rt.setFromAngle(-3); // Miring kiri 3 derajat
+        rt.setToAngle(3);    // Miring kanan 3 derajat
+        rt.setCycleCount(20);
+        rt.setAutoReverse(true);
+
+        // --- JALANKAN SEMUA BERSAMAAN ---
+        colorTimeline.play();
+        st.play();
+        rt.play();
+
+        // PENTING: Kembalikan ke tampilan Putih Bersih setelah pesta selesai
+        colorTimeline.setOnFinished(e -> {
+            region.setStyle(originalStyle); // Reset background ke Putih
+            node.setScaleX(1.0); // Reset ukuran jaga-jaga
+            node.setScaleY(1.0);
+            node.setRotate(0);   // Reset rotasi
+        });
     };
 
     public static final Gimmick JUMPSCARE = (node) -> {
@@ -189,6 +255,26 @@ public class GimmickLibrary {
         // Efek memantul yang realistis
         tt.setInterpolator(Interpolator.EASE_OUT); 
         tt.play();
+    };
+
+    public static final Gimmick OPEN_PAINT = (targetNode) -> {
+        Stage paintStage = new Stage();
+        paintStage.setTitle("Mini Canvas");
+
+        MiniPaint paintApp = new MiniPaint(() -> paintStage.close());
+
+        Scene scene = new Scene(paintApp);
+        paintStage.setScene(scene);
+
+        // Posisi Offset
+        if (targetNode.getScene() != null && targetNode.getScene().getWindow() != null) {
+            double mainX = targetNode.getScene().getWindow().getX();
+            double mainY = targetNode.getScene().getWindow().getY();
+            paintStage.setX(mainX + 40);
+            paintStage.setY(mainY + 40);
+        }
+
+        paintStage.show();
     };
 
     public static final Gimmick SHOW_BURUNG = (node) -> {

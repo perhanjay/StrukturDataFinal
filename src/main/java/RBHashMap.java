@@ -1,4 +1,6 @@
 //import RBTree;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RBHashMap {
 
@@ -56,4 +58,25 @@ public class RBHashMap {
         }
         System.out.println("=========================\n");
     }
+
+    public List<Suggestion> getSuggestions(String prefix, int limit) {
+        List<Suggestion> results = new ArrayList<>();
+        
+        // Loop ke SEMUA bucket (Laci)
+        for (int i = 0; i < capacity; i++) {
+            if (buckets[i] != null) {
+                // Suruh setiap pohon di laci untuk mencari kata berawalan prefix
+                buckets[i].collectSuggestions(prefix, results, limit);
+                
+                // Jika sudah dapat cukup banyak (misal 10), berhenti agar tidak berat
+                if (results.size() >= limit) break;
+            }
+        }
+        
+        // Opsional: Sort hasil akhir secara alfabetis (karena hashmap tidak urut)
+        results.sort((a, b) -> a.word().compareTo(b.word()));
+        
+        return results;
+    }
+
 }

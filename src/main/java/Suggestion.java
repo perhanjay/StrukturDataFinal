@@ -1,0 +1,1 @@
+public record Suggestion(String word, String definition, Gimmick gimmick) {}

@@ -78,5 +78,15 @@
     "word": "burung",
     "definition": "Hewan bersayap yang bisa terbang (Klik gambar untuk menutup).",
     "gimmick": "SHOW_BURUNG"
+  },
+  {
+    "word": "paint",
+    "definition": "Melukis atau menggambar di kanvas.",
+    "gimmick": "OPEN_PAINT"
+  },
+  {
+    "word": "draw",
+    "definition": "Membuat sketsa visual.",
+    "gimmick": "OPEN_PAINT"
   }
 ]
