@@ -25,7 +25,6 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-// Import tambahan untuk Gimmick (Pastikan GimmickLibrary ada)
 import javafx.animation.*;
 import javafx.scene.effect.*;
 import javafx.scene.image.*;
@@ -37,7 +36,6 @@ public class MainApp extends Application {
     private static final String FONT_SERIF = "-fx-font-family: 'Times New Roman', 'Georgia', serif;";
     private static final String FONT_SANS  = "-fx-font-family: 'Helvetica', 'Arial', sans-serif;";
 
-    // --- 2. BACKEND COMPONENTS (Sesuai migrate-rbt) ---
     private RBTree engTree;
     private RBTree idnTree;
     private boolean isIndoToEng = true;
@@ -45,7 +43,7 @@ public class MainApp extends Application {
     // --- 3. UI COMPONENTS ---
     private TextField searchField;
     private Label wordLabel, tagLabel, defHeaderLabel, definitionLabel;
-    private Label transTitle, transLabel; // KHUSUS migrate-rbt (Terjemahan Balik)
+    private Label transTitle, transLabel;
     private Label modeLabel;
     private Label titleLabel;
     
@@ -67,7 +65,7 @@ public class MainApp extends Application {
         idnTree = new RBTree();
         populateData(); // Mengisi data ke kedua pohon
 
-        // B. SETUP TIMER DEBOUNCE (1.5 Detik)
+        // debounce agar user bisa menyelesaikan kata yang dicari dlu
         searchDebounce = new PauseTransition(Duration.seconds(1.5));
         searchDebounce.setOnFinished(e -> {
             String text = searchField.getText().toLowerCase().trim();
@@ -817,7 +815,7 @@ public class MainApp extends Application {
         };
         addDictionaryEntry("jatuh", "Bergerak ke bawah dengan cepat.", "fall", "Move downwards.", gravityGimmick);
         addDictionaryEntry("gravitasi", "Gaya tarik bumi.", "gravity", "Force that pulls objects down.", gravityGimmick);
-        addDictionaryEntry("rusak", "Kondisi tidak berfungsi.", "broken", "Not working properly.", gravityGimmick);
+//        addDictionaryEntry("rusak", "Kondisi tidak berfungsi.", "broken", "Not working properly.", gravityGimmick);
 
         Gimmick bsodGimmick = (node) -> {
             if (!(node instanceof Pane)) return;
