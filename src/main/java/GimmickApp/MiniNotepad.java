@@ -1,3 +1,5 @@
+package GimmickApp;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -18,22 +20,22 @@ public class MiniNotepad extends VBox {
 
     private TextArea inputArea;
     private TextArea outputArea;
-    private Button btnRun; // Perlu akses global untuk trigger
+    private Button btnRun; 
     private Runnable onCloseRequest;
 
-    // 1. FONT STACK (Konsisten dengan MainApp)
-    private static final String FONT_STYLE = "-fx-font-family: 'SF Pro Display', 'San Francisco', 'Segoe UI', sans-serif;";
-    // Font khusus coding (Monospace)
-    private static final String CODE_FONT = "-fx-font-family: 'Consolas', 'Menlo', 'Monaco', monospace;";
+    // FONT STACK
+    private static final String FONT_SERIF = "-fx-font-family: 'Times New Roman', 'Georgia', serif;";
+    private static final String FONT_SANS  = "-fx-font-family: 'Helvetica', 'Arial', sans-serif;";
+    private static final String FONT_CODE  = "-fx-font-family: 'Consolas', 'Menlo', 'Monaco', monospace;";
 
     public MiniNotepad(Runnable onCloseRequest) {
         this.onCloseRequest = onCloseRequest;
 
-        // 2. Setup Container (Background Abu-abu Apple Style)
-        this.setAlignment(Pos.TOP_CENTER);
+        // Background Putih Bersih
+        this.setAlignment(Pos.TOP_LEFT);
         this.setSpacing(15);
-        this.setPadding(new Insets(25));
-        this.setStyle("-fx-background-color: #F5F5F7;" + FONT_STYLE);
+        this.setPadding(new Insets(30));
+        this.setStyle("-fx-background-color: white;");
         this.setPrefSize(450, 600);
 
         initUI();
@@ -41,85 +43,65 @@ public class MiniNotepad extends VBox {
 
     private void initUI() {
         // --- Header ---
-        Label titleLabel = new Label("Python Playground");
-        titleLabel.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #1C1C1E;");
+        Label titleLabel = new Label("Playground");
+        titleLabel.setStyle(FONT_SERIF + "-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: black;");
         
-        Label subtitleLabel = new Label("Tulis kode Python, tekan Ctrl + Enter untuk Run");
-        subtitleLabel.setStyle("-fx-font-size: 13px; -fx-text-fill: #8E8E93;");
+        Label subtitleLabel = new Label("Python 3.x Environment");
+        subtitleLabel.setStyle(FONT_SANS + "-fx-font-size: 14px; -fx-text-fill: #999;");
 
         // --- Input Editor ---
-        Label inputLabel = new Label("Code Editor");
-        inputLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #8E8E93;");
-        inputLabel.setMaxWidth(Double.MAX_VALUE); // Align left
+        Label inputLabel = new Label("EDITOR");
+        inputLabel.setStyle(FONT_SANS + "-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #999; -fx-letter-spacing: 1px;");
         
         inputArea = new TextArea();
-        inputArea.setPromptText("Contoh:\nprint('Halo Dunia')\nprint(10 + 5)");
+        inputArea.setPromptText("print('Hello World')");
         inputArea.setPrefHeight(200);
-        // Styling Editor: Putih, Rounded, Shadow Halus (Mirip Result Card MainApp)
+        // Style Editor: Abu-abu Soft, Tanpa Border
         inputArea.setStyle(
-            CODE_FONT +
+            FONT_CODE +
             "-fx-font-size: 14px;" +
-            "-fx-control-inner-background: white;" + 
-            "-fx-background-radius: 12; -fx-border-radius: 12; -fx-border-color: #E5E5EA;" +
-            "-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 5, 0, 0, 2);"
+            "-fx-control-inner-background: #F2F2F7;" + // Abu-abu iOS
+            "-fx-text-fill: black;" +
+            "-fx-background-radius: 12; -fx-border-radius: 12;" +
+            "-fx-border-width: 0; -fx-faint-focus-color: transparent; -fx-focus-color: transparent;" // Hapus garis biru saat diklik
         );
 
         // --- Output Console ---
-        Label outputLabel = new Label("Console Output");
-        outputLabel.setStyle("-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #8E8E93;");
-        outputLabel.setMaxWidth(Double.MAX_VALUE);
+        Label outputLabel = new Label("TERMINAL");
+        outputLabel.setStyle(FONT_SANS + "-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #999; -fx-letter-spacing: 1px;");
 
         outputArea = new TextArea();
         outputArea.setEditable(false);
         outputArea.setPrefHeight(150);
-        // Styling Console: Gelap, Teks Hijau Terminal
+        // Style Console: Hitam Pekat (Kontras Tinggi)
         outputArea.setStyle(
-            CODE_FONT +
+            FONT_CODE +
             "-fx-font-size: 13px;" +
-            "-fx-control-inner-background: #1C1C1E;" + 
-            "-fx-text-fill: #30D158;" + 
-            "-fx-background-radius: 12; -fx-border-radius: 12;"
+            "-fx-control-inner-background: black;" + 
+            "-fx-text-fill: white;" + // Teks Putih terminal
+            "-fx-background-radius: 12; -fx-border-radius: 12;" +
+            "-fx-border-width: 0;"
         );
 
         // --- Buttons ---
         HBox buttonBox = new HBox(15);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
 
-        // Tombol Close (Red Text)
         Button btnClose = new Button("Close");
-        btnClose.setStyle(
-            "-fx-background-color: transparent;" +
-            "-fx-text-fill: #FF3B30;" + // Merah Apple
-            "-fx-font-weight: bold;" +
+        btnClose.setStyle(FONT_SANS + "-fx-background-color: transparent; -fx-text-fill: #999; -fx-font-weight: bold; -fx-cursor: hand;");
+        btnClose.setOnAction(e -> { if (onCloseRequest != null) onCloseRequest.run(); });
+
+        // Tombol Run: Hitam Solid
+        btnRun = new Button("Run Code");
+        btnRun.setStyle(
+            FONT_SANS + 
+            "-fx-background-color: black;" +
+            "-fx-text-fill: white;" +
+            "-fx-background-radius: 20;" +
             "-fx-cursor: hand;" +
-            "-fx-font-size: 14px;"
+            "-fx-padding: 10 25;" +
+            "-fx-font-weight: bold;"
         );
-        btnClose.setOnAction(e -> {
-            if (onCloseRequest != null) onCloseRequest.run();
-        });
-
-        // Tombol Run (Gradient Blue - SAMA dengan MainApp & Calculator)
-        btnRun = new Button("▶ Run Code");
-        String normalStyle = 
-            "-fx-background-color: linear-gradient(to right, #007AFF 0%, #00C6FF 100%);" +
-            "-fx-text-fill: white;" +
-            "-fx-background-radius: 20;" +
-            "-fx-cursor: hand;" +
-            "-fx-padding: 10 25;" +
-            "-fx-font-size: 14px; -fx-font-weight: bold;" +
-            "-fx-effect: dropshadow(three-pass-box, rgba(0,122,255,0.3), 10, 0, 0, 5);";
-            
-        String hoverStyle = 
-            "-fx-background-color: linear-gradient(to right, #0056b3 0%, #007AFF 100%);" +
-            "-fx-text-fill: white;" +
-            "-fx-background-radius: 20;" +
-            "-fx-cursor: hand;" +
-            "-fx-padding: 10 25;" +
-            "-fx-font-size: 14px; -fx-font-weight: bold;";
-
-        btnRun.setStyle(normalStyle);
-        btnRun.setOnMouseEntered(e -> btnRun.setStyle(hoverStyle));
-        btnRun.setOnMouseExited(e -> btnRun.setStyle(normalStyle));
         btnRun.setOnAction(e -> runPythonCode());
 
         buttonBox.getChildren().addAll(btnClose, btnRun);
@@ -131,14 +113,14 @@ public class MiniNotepad extends VBox {
             outputLabel, outputArea, 
             buttonBox
         );
-        VBox.setVgrow(inputArea, Priority.ALWAYS); // Agar editor mengisi ruang kosong
+        VBox.setVgrow(inputArea, Priority.ALWAYS); 
 
-        // 3. FITUR UX: Shortcut Ctrl+Enter untuk Run
+        // Shortcut Ctrl+Enter
         KeyCombination runCombo = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.CONTROL_DOWN);
         inputArea.setOnKeyPressed(event -> {
             if (runCombo.match(event)) {
-                btnRun.fire(); // Tekan tombol Run secara programatis
-                event.consume(); // Cegah Enter membuat baris baru
+                btnRun.fire();
+                event.consume();
             }
         });
     }
@@ -147,7 +129,6 @@ public class MiniNotepad extends VBox {
         String code = inputArea.getText();
         if (code.trim().isEmpty()) return;
 
-        // Feedback Visual saat loading (Tombol jadi abu-abu sebentar)
         String originalText = btnRun.getText();
         btnRun.setText("Running...");
         btnRun.setDisable(true);
@@ -172,7 +153,7 @@ public class MiniNotepad extends VBox {
 
                 int exitCode = process.waitFor();
                 if (exitCode != 0) {
-                    output.append("\n[Process exited with code ").append(exitCode).append("]");
+                    output.append("\n[Exit: ").append(exitCode).append("]");
                 }
 
                 String finalOutput = output.toString();
@@ -184,7 +165,7 @@ public class MiniNotepad extends VBox {
 
             } catch (Exception e) {
                 javafx.application.Platform.runLater(() -> {
-                    outputArea.setText("Error: Gagal menjalankan Python.\n" + e.getMessage());
+                    outputArea.setText("Error: " + e.getMessage());
                     btnRun.setText(originalText);
                     btnRun.setDisable(false);
                 });
