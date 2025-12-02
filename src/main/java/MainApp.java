@@ -58,6 +58,7 @@ public class MainApp extends Application {
     
     // Timer untuk Auto-Search (Debounce)
     private PauseTransition searchDebounce;
+    private AnimationTimer activeTimer = null;
 
     @Override
     public void start(Stage stage) {
@@ -69,10 +70,23 @@ public class MainApp extends Application {
         // B. SETUP TIMER DEBOUNCE (1.5 Detik)
         searchDebounce = new PauseTransition(Duration.seconds(1.5));
         searchDebounce.setOnFinished(e -> {
-            String text = searchField.getText();
-            if (!text.trim().isEmpty()) {
-                performSearch(text);
+            String text = searchField.getText().toLowerCase().trim();
+            if (text.isEmpty()) return;
+
+            // 1. Cek dulu: Apakah kata ini BENAR-BENAR ADA di kamus?
+            boolean exactMatchFound;
+            if (isIndoToEng) {
+                exactMatchFound = (idnTree.get(text) != null);
+            } else {
+                exactMatchFound = (engTree.get(text) != null);
             }
+
+            // 2. Hanya eksekusi pindah layar jika KATA DITEMUKAN
+            if (exactMatchFound) {
+                performSearch(text);
+            } 
+            // Else: Jangan lakukan apa-apa. 
+            // Biarkan suggestion list tetap terlihat. Jangan tampilkan "Not Found".
         });
 
         // --- C. MEMBANGUN UI ---
@@ -256,6 +270,12 @@ public class MainApp extends Application {
 
     private void performSearch(String query) {
         searchDebounce.stop();
+
+        if (activeTimer != null) {
+            activeTimer.stop();
+            activeTimer = null; // Reset
+        }
+
         query = query.toLowerCase().trim();
         suggestionScroll.setVisible(false);
         
@@ -545,11 +565,14 @@ public class MainApp extends Application {
                     }
                 }
             };
+            activeTimer = timer; 
+            
             timer.start();
             
-            // Klik layar untuk berhenti (Keluar mode hacker)
+            // Klik berhenti
             matrixCanvas.setOnMouseClicked(e -> {
                 timer.stop();
+                activeTimer = null; // Bersihkan referensi
                 rootPane.getChildren().remove(matrixCanvas);
             });
         };
@@ -557,6 +580,12 @@ public class MainApp extends Application {
 
         Gimmick soundGimmick = (node) -> {
             try {
+                
+                var resource = getClass().getResource("/presiden.mp3");
+                if (resource == null) {
+                    System.out.println("File audio tidak ditemukan!");
+                    return;
+                }
                 // Load file audio dari resources
                 String audioPath = getClass().getResource("/presiden.mp3").toExternalForm();
                 AudioClip clip = new AudioClip(audioPath);
