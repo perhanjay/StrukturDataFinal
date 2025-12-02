@@ -1,3 +1,7 @@
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import GimmickApp.MiniCalculator;
 import GimmickApp.MiniNotepad;
 import GimmickApp.MiniPaint;
@@ -11,6 +15,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.media.AudioClip;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -42,14 +47,18 @@ public class MainApp extends Application {
     private Label wordLabel, tagLabel, defHeaderLabel, definitionLabel;
     private Label transTitle, transLabel; // KHUSUS migrate-rbt (Terjemahan Balik)
     private Label modeLabel;
+    private Label titleLabel;
     
     private VBox suggestionBox;
     private ScrollPane suggestionScroll;
     private StackPane root;
     private VBox mainLayout;
+    private Button switchBtn; 
+    private boolean isDarkTheme = false;
     
     // Timer untuk Auto-Search (Debounce)
     private PauseTransition searchDebounce;
+    private AnimationTimer activeTimer = null;
 
     @Override
     public void start(Stage stage) {
@@ -61,16 +70,29 @@ public class MainApp extends Application {
         // B. SETUP TIMER DEBOUNCE (1.5 Detik)
         searchDebounce = new PauseTransition(Duration.seconds(1.5));
         searchDebounce.setOnFinished(e -> {
-            String text = searchField.getText();
-            if (!text.trim().isEmpty()) {
-                performSearch(text);
+            String text = searchField.getText().toLowerCase().trim();
+            if (text.isEmpty()) return;
+
+            // 1. Cek dulu: Apakah kata ini BENAR-BENAR ADA di kamus?
+            boolean exactMatchFound;
+            if (isIndoToEng) {
+                exactMatchFound = (idnTree.get(text) != null);
+            } else {
+                exactMatchFound = (engTree.get(text) != null);
             }
+
+            // 2. Hanya eksekusi pindah layar jika KATA DITEMUKAN
+            if (exactMatchFound) {
+                performSearch(text);
+            } 
+            // Else: Jangan lakukan apa-apa. 
+            // Biarkan suggestion list tetap terlihat. Jangan tampilkan "Not Found".
         });
 
         // --- C. MEMBANGUN UI ---
 
         // 1. HEADER (Judul + Mode Switcher)
-        Label titleLabel = new Label("Dictionary");
+        titleLabel = new Label("Dictionary");
         titleLabel.setStyle(FONT_SERIF + "-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: black;");
 
         // Mode Label (Kecil di atas)
@@ -78,7 +100,7 @@ public class MainApp extends Application {
         modeLabel.setStyle(FONT_SANS + "-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #888; -fx-letter-spacing: 1px;");
         
         // Tombol Switch (Minimalis)
-        Button switchBtn = new Button("⇄ Switch");
+        switchBtn = new Button("⇄ Switch");
         switchBtn.setStyle(
             FONT_SANS + 
             "-fx-background-color: transparent; -fx-text-fill: black;" + 
@@ -210,14 +232,23 @@ public class MainApp extends Application {
 
     private void populateSuggestions(List<Suggestion> suggestions) {
         suggestionBox.getChildren().clear();
+        
+        // Tentukan warna berdasarkan tema SAAT INI
+        String cardBg = isDarkTheme ? "#1E1E1E" : "white";
+        String hoverBg = isDarkTheme ? "#333333" : "#F2F2F7";
+        String textColor = isDarkTheme ? "white" : "black";
+        String borderColor = isDarkTheme ? "#333333" : "#E5E5EA";
+
         for (Suggestion item : suggestions) {
             HBox card = new HBox();
             card.setPadding(new Insets(15));
             card.setAlignment(Pos.CENTER_LEFT);
-            card.setStyle("-fx-background-color: white; -fx-border-color: #E5E5EA; -fx-border-width: 0 0 1 0; -fx-cursor: hand;");
+            
+            // Gunakan variabel warna dinamis di sini
+            card.setStyle("-fx-background-color: " + cardBg + "; -fx-border-color: " + borderColor + "; -fx-border-width: 0 0 1 0; -fx-cursor: hand;");
 
             Label wordText = new Label(item.word());
-            wordText.setStyle(FONT_SERIF + "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: black;");
+            wordText.setStyle(FONT_SERIF + "-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
             
             Label defSnippet = new Label("  -  " + item.definition());
             defSnippet.setStyle(FONT_SANS + "-fx-font-size: 12px; -fx-text-fill: #8E8E93;");
@@ -225,8 +256,9 @@ public class MainApp extends Application {
 
             card.getChildren().addAll(wordText, defSnippet);
 
-            card.setOnMouseEntered(e -> card.setStyle(card.getStyle() + "-fx-background-color: #F2F2F7;")); 
-            card.setOnMouseExited(e -> card.setStyle(card.getStyle() + "-fx-background-color: white;"));
+            // Update efek Hover juga
+            card.setOnMouseEntered(e -> card.setStyle(card.getStyle().replace(cardBg, hoverBg))); 
+            card.setOnMouseExited(e -> card.setStyle(card.getStyle().replace(hoverBg, cardBg)));
 
             card.setOnMouseClicked(e -> {
                 searchField.setText(item.word()); 
@@ -238,6 +270,12 @@ public class MainApp extends Application {
 
     private void performSearch(String query) {
         searchDebounce.stop();
+
+        if (activeTimer != null) {
+            activeTimer.stop();
+            activeTimer = null; // Reset
+        }
+
         query = query.toLowerCase().trim();
         suggestionScroll.setVisible(false);
         
@@ -482,6 +520,93 @@ public class MainApp extends Application {
         };
         addDictionaryEntry("burung", "Hewan bersayap.", "bird", "Winged animal.", birdGimmick);
 
+        Gimmick hackerGimmick = (node) -> {
+            if (!(node instanceof Pane)) return;
+            Pane rootPane = (Pane) node;
+            
+            // 1. Siapkan Canvas Full Screen
+            Canvas matrixCanvas = new Canvas(rootPane.getWidth(), rootPane.getHeight());
+            GraphicsContext gc = matrixCanvas.getGraphicsContext2D();
+            
+            // Masukkan ke root (paling depan)
+            rootPane.getChildren().add(matrixCanvas);
+            
+            // 2. Setup Kolom Matrix
+            int fontSize = 16;
+            int columns = (int) (rootPane.getWidth() / fontSize);
+            int[] drops = new int[columns]; // Posisi Y setiap kolom
+            
+            // 3. Animasi Loop
+            AnimationTimer timer = new AnimationTimer() {
+                long lastRun = 0;
+                
+                @Override
+                public void handle(long now) {
+                    if (now - lastRun < 50_000_000) return; // Batasi kecepatan (50ms)
+                    lastRun = now;
+
+                    // Efek Fade (Timpa layer hitam tipis agar jejak huruf terlihat pudar)
+                    gc.setFill(new Color(0, 0, 0, 0.1));
+                    gc.fillRect(0, 0, matrixCanvas.getWidth(), matrixCanvas.getHeight());
+                    
+                    gc.setFill(Color.LIME); // Huruf Hijau
+                    gc.setFont(Font.font("Monospaced", fontSize));
+                    
+                    for (int i = 0; i < drops.length; i++) {
+                        // Karakter Katakana / Acak
+                        String text = String.valueOf((char) (0x30A0 + Math.random() * 96)); 
+                        gc.fillText(text, i * fontSize, drops[i] * fontSize);
+                        
+                        // Reset jika sudah di bawah layar atau acak
+                        if (drops[i] * fontSize > matrixCanvas.getHeight() && Math.random() > 0.975) {
+                            drops[i] = 0;
+                        }
+                        drops[i]++;
+                    }
+                }
+            };
+            activeTimer = timer; 
+            
+            timer.start();
+            
+            // Klik berhenti
+            matrixCanvas.setOnMouseClicked(e -> {
+                timer.stop();
+                activeTimer = null; // Bersihkan referensi
+                rootPane.getChildren().remove(matrixCanvas);
+            });
+        };
+        addDictionaryEntry("hacker", "Peretas sistem.", "hacker", "System intruder.", hackerGimmick);
+
+        Gimmick soundGimmick = (node) -> {
+            try {
+                
+                var resource = getClass().getResource("/presiden.mp3");
+                if (resource == null) {
+                    System.out.println("File audio tidak ditemukan!");
+                    return;
+                }
+                // Load file audio dari resources
+                String audioPath = getClass().getResource("/presiden.mp3").toExternalForm();
+                AudioClip clip = new AudioClip(audioPath);
+                
+                // Mainkan suara
+                clip.play();
+                
+                // Opsional: Tampilkan efek visual juga (misal gambar bendera atau hormat)
+                // Disini kita pakai animasi simple scale sebagai tanda audio main
+                ScaleTransition st = new ScaleTransition(Duration.millis(200), node);
+                st.setByX(0.1); st.setByY(0.1);
+                st.setCycleCount(2); 
+                st.setAutoReverse(true);
+                st.play();
+                
+            } catch (Exception e) {
+                System.out.println("Gagal memuat audio: " + e.getMessage());
+            }
+        };
+        addDictionaryEntry("presiden", "Kepala negara.", "president", "Head of state.", soundGimmick);
+
         Gimmick calcGimmick = (node) -> {
             try {
                 Stage s = new Stage();
@@ -504,6 +629,155 @@ public class MainApp extends Application {
         addDictionaryEntry("python", "Bahasa program.", "python", "Programming language.", noteGimmick);
         addDictionaryEntry("catatan", "Aplikasi tulis.", "notepad", "Note app.", noteGimmick);
 
+        Gimmick upsideDownGimmick = (node) -> {
+            RotateTransition rt = new RotateTransition(Duration.seconds(1), node);
+            rt.setToAngle(180); // Putar sampai terbalik
+            rt.play();
+            // Note: Tidak perlu reset manual disini, karena di performSearch() 
+            // kita sudah punya 'root.setRotate(0)' yang akan meresetnya nanti.
+        };
+        addDictionaryEntry("terbalik", "Posisi atas di bawah.", "upside down", "Inverted position.", upsideDownGimmick);
+        addDictionaryEntry("australia", "Negara di belahan bumi selatan.", "australia", "Country down under.", upsideDownGimmick);
+
+        Gimmick dvdGimmick = (node) -> {
+            if (!(node instanceof Pane)) return;
+            Pane rootPane = (Pane) node;
+
+            // Buat Label DVD
+            Label dvdLabel = new Label("DVD");
+            dvdLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white; -fx-padding: 10; -fx-background-color: black; -fx-background-radius: 5;");
+            
+            // Container hitam full screen (agar fokus)
+            Pane screensaverPane = new Pane(dvdLabel);
+            screensaverPane.setStyle("-fx-background-color: black;");
+            screensaverPane.setPrefSize(400, 650);
+            
+            rootPane.getChildren().add(screensaverPane);
+
+            // Logika Gerak Pantul
+            AnimationTimer timer = new AnimationTimer() {
+                double x = 50, y = 50;
+                double dx = 2, dy = 2; // Kecepatan
+                
+                @Override
+                public void handle(long now) {
+                    // Update posisi
+                    x += dx;
+                    y += dy;
+                    
+                    // Cek Tabrakan Dinding
+                    if (x <= 0 || x + dvdLabel.getWidth() >= screensaverPane.getWidth()) {
+                        dx = -dx; // Balik arah X
+                        dvdLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white; -fx-padding: 10; -fx-background-color: " + randomColor() + "; -fx-background-radius: 5;");
+                    }
+                    if (y <= 0 || y + dvdLabel.getHeight() >= screensaverPane.getHeight()) {
+                        dy = -dy; // Balik arah Y
+                        dvdLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white; -fx-padding: 10; -fx-background-color: " + randomColor() + "; -fx-background-radius: 5;");
+                    }
+                    
+                    dvdLabel.setLayoutX(x);
+                    dvdLabel.setLayoutY(y);
+                }
+                
+                // Helper warna acak
+                private String randomColor() {
+                    return "hsb(" + Math.random() * 360 + ", 70%, 100%)";
+                }
+            };
+            timer.start();
+
+            // Klik untuk keluar
+            screensaverPane.setOnMouseClicked(e -> {
+                timer.stop();
+                rootPane.getChildren().remove(screensaverPane);
+            });
+        };
+        addDictionaryEntry("lama", "Waktu yang panjang.", "boring", "Not interesting.", dvdGimmick);
+        addDictionaryEntry("dvd", "Media penyimpanan optik.", "dvd", "Optical storage.", dvdGimmick);
+
+        Gimmick roachGimmick = (node) -> {
+            if (!(node instanceof Pane)) return;
+            Pane rootPane = (Pane) node;
+
+            try {
+                // 1. Load Gambar (Sekali saja agar ringan)
+                String path = "/kecoa.png"; 
+                if (getClass().getResource(path) == null) {
+                    System.out.println("Gagal: kecoa.png tidak ditemukan!");
+                    return;
+                }
+                Image img = new Image(getClass().getResourceAsStream(path));
+
+                // 2. Loop untuk memunculkan BANYAK kecoa
+                int jumlahKecoa = 100; // Bisa ditambah jika ingin lebih ekstrem
+                
+                for (int i = 0; i < jumlahKecoa; i++) {
+                    ImageView roach = new ImageView(img);
+                    
+                    // Acak Ukuran (Biar ada yang besar dan kecil)
+                    double size = 40 + Math.random() * 60; // Antara 40px - 100px
+                    roach.setFitWidth(size); 
+                    roach.setPreserveRatio(true);
+
+                    // 3. Tentukan Posisi Awal & Akhir secara Acak
+                    double startX, startY, endX, endY;
+                    double width = rootPane.getWidth();
+                    double height = rootPane.getHeight();
+                    
+                    // Pilih sisi muncul acak (0=Atas, 1=Kanan, 2=Bawah, 3=Kiri)
+                    int side = (int) (Math.random() * 4);
+                    
+                    if (side == 0) { // Dari Atas ke Bawah
+                        startX = Math.random() * width; startY = -100;
+                        endX = Math.random() * width;   endY = height + 100;
+                    } else if (side == 1) { // Dari Kanan ke Kiri
+                        startX = width + 100;           startY = Math.random() * height;
+                        endX = -100;                    endY = Math.random() * height;
+                    } else if (side == 2) { // Dari Bawah ke Atas
+                        startX = Math.random() * width; startY = height + 100;
+                        endX = Math.random() * width;   endY = -100;
+                    } else { // Dari Kiri ke Kanan
+                        startX = -100;                  startY = Math.random() * height;
+                        endX = width + 100;             endY = Math.random() * height;
+                    }
+
+                    // Set posisi awal
+                    roach.setTranslateX(startX);
+                    roach.setTranslateY(startY);
+
+                    // 4. Hitung Rotasi (Agar kepala menghadap arah lari)
+                    // Math.atan2 menghasilkan sudut dalam radian, kita ubah ke derajat
+                    double angle = Math.toDegrees(Math.atan2(endY - startY, endX - startX));
+                    roach.setRotate(angle + 90); // +90 asumsi gambar asli menghadap ke atas
+
+                    // Tambahkan ke layar
+                    rootPane.getChildren().add(roach);
+
+                    // 5. Animasi Jalan
+                    // Kecepatan acak (1 detik s.d 4 detik) -> Makin kecil makin ngebut
+                    double duration = 1.0 + Math.random() * 3.0;
+                    
+                    TranslateTransition tt = new TranslateTransition(Duration.seconds(duration), roach);
+                    tt.setFromX(startX); tt.setFromY(startY);
+                    tt.setToX(endX);     tt.setToY(endY);
+                    
+                    // Hapus kecoa dari memori setelah lewat layar
+                    tt.setOnFinished(e -> rootPane.getChildren().remove(roach));
+                    
+                    // Beri sedikit delay acak agar tidak muncul serentak barengan
+                    tt.setDelay(Duration.millis(Math.random() * 1000));
+                    
+                    tt.play();
+                }
+
+            } catch (Exception e) {
+                System.out.println("Error cockroach: " + e.getMessage());
+            }
+        };
+        // Update entri kamus
+        addDictionaryEntry("jorok", "Kotor dan menjijikkan.", "dirty", "Not clean.", roachGimmick);
+        addDictionaryEntry("kecoa", "Serangga hama.", "cockroach", "Pest insect.", roachGimmick);
+
         // 15. PAINT (Canvas) - Asumsi Anda punya class MiniPaint
         Gimmick paintGimmick = (node) -> {
             try {
@@ -522,32 +796,128 @@ public class MainApp extends Application {
                 for (javafx.scene.Node child : container.getChildren()) {
                     
                     // Simpan posisi translasi awal agar bisa dikembalikan
-                    double startY = child.getTranslateY(); 
+                    double originalY = child.getLayoutY() + child.getTranslateY();
                     
                     Timeline timeline = new Timeline(
                         // 1. Mulai dari posisi saat ini
-                        new KeyFrame(Duration.ZERO, new KeyValue(child.translateYProperty(), startY)),
+                        new KeyFrame(Duration.ZERO, new KeyValue(child.translateYProperty(), child.getTranslateY())),
                         
                         // 2. Jatuh ke bawah (Y = 1000) dalam 1 detik (Makin lama makin cepat/Ease In)
-                        new KeyFrame(Duration.seconds(1.0), new KeyValue(child.translateYProperty(), 1000.0, Interpolator.EASE_IN)),
+                        new KeyFrame(Duration.seconds(1.0), new KeyValue(child.translateYProperty(), 1000, Interpolator.EASE_IN)),
                         
                         // 3. Diam di bawah selama 0.5 detik (sampai detik ke-1.5)
                         new KeyFrame(Duration.seconds(1.5)),
                         
                         // 4. Kembali ke posisi awal (Membal) dalam 0.5 detik
-                        new KeyFrame(Duration.seconds(2.0), new KeyValue(child.translateYProperty(), startY, Interpolator.EASE_OUT))
+                        new KeyFrame(Duration.seconds(2.0), new KeyValue(child.translateYProperty(), 0, Interpolator.EASE_OUT))
                     );
                     timeline.play();
                 }
             }
         };
+        addDictionaryEntry("jatuh", "Bergerak ke bawah dengan cepat.", "fall", "Move downwards.", gravityGimmick);
         addDictionaryEntry("gravitasi", "Gaya tarik bumi.", "gravity", "Force that pulls objects down.", gravityGimmick);
+        addDictionaryEntry("rusak", "Kondisi tidak berfungsi.", "broken", "Not working properly.", gravityGimmick);
+
+        Gimmick bsodGimmick = (node) -> {
+            if (!(node instanceof Pane)) return;
+            Pane rootPane = (Pane) node;
+
+            // Container Biru Error
+            VBox bsod = new VBox(20);
+            bsod.setAlignment(Pos.CENTER_LEFT);
+            bsod.setPadding(new Insets(50));
+            bsod.setStyle("-fx-background-color: #0078D7;"); // Warna Biru Windows
+            bsod.setPrefSize(400, 650);
+
+            // Emoticon Sedih
+            Label sadFace = new Label(":(");
+            sadFace.setStyle("-fx-font-size: 80px; -fx-text-fill: white; -fx-font-family: 'Segoe UI', sans-serif;");
+
+            // Teks Error
+            Label errorText = new Label("Your PC ran into a problem and needs to restart.\nWe're just collecting some error info, and then\nwe'll restart for you.");
+            errorText.setStyle("-fx-font-size: 16px; -fx-text-fill: white; -fx-font-family: 'Segoe UI', sans-serif;");
+            errorText.setWrapText(true);
+
+            Label progress = new Label("0% complete");
+            progress.setStyle("-fx-font-size: 16px; -fx-text-fill: white; -fx-font-family: 'Segoe UI', sans-serif;");
+
+            bsod.getChildren().addAll(sadFace, errorText, progress);
+            rootPane.getChildren().add(bsod);
+
+            // Animasi Persentase Palsu
+            Timeline crashTimeline = new Timeline(
+                new KeyFrame(Duration.seconds(0.5), e -> progress.setText("10% complete")),
+                new KeyFrame(Duration.seconds(1.5), e -> progress.setText("45% complete")),
+                new KeyFrame(Duration.seconds(3.0), e -> progress.setText("90% complete")),
+                new KeyFrame(Duration.seconds(4.0), e -> progress.setText("100% complete"))
+            );
+            crashTimeline.play();
+
+            // Klik untuk sembuh (Exit prank)
+            bsod.setOnMouseClicked(e -> rootPane.getChildren().remove(bsod));
+        };
+        addDictionaryEntry("error", "Kesalahan sistem.", "error", "System mistake.", bsodGimmick);
+        addDictionaryEntry("rusak", "Tidak berfungsi.", "crash", "System failure.", bsodGimmick);
+
+        addDictionaryEntry("gelap", "Mode malam.", "dark", "Night mode.", (node) -> changeTheme(true));
+        
+        // 20. LIGHT MODE (Reset)
+        addDictionaryEntry("terang", "Mode siang.", "light", "Day mode.", (node) -> changeTheme(false));
 
         addDictionaryEntry("apel", "Buah merah.", "apple", "Red fruit.", null);
         addDictionaryEntry("buku", "Jendela dunia.", "book", "Reading material.", null);
         addDictionaryEntry("rumah", "Tempat tinggal.", "house", "Place to live.", null);
         // ... Tambahkan data lain di sini ...
     }
+
+    private void changeTheme(boolean isDark) {
+        this.isDarkTheme = isDark; // Simpan status agar populateSuggestions tahu
+
+        // Tentukan Palet Warna
+        String bgColor = isDark ? "#121212" : "white";
+        String textColor = isDark ? "white" : "black";
+        String subTextColor = isDark ? "#B0B0B0" : "#888888";
+        String fieldBg = isDark ? "#1E1E1E" : "#F2F2F7";
+        String cardBg = isDark ? "#1E1E1E" : "white"; 
+
+        // 1. Background Utama
+        root.setStyle("-fx-background-color: " + bgColor + ";");
+
+        // 2. Judul & Mode Label
+        titleLabel.setStyle(FONT_SERIF + "-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
+        modeLabel.setStyle(FONT_SANS + "-fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: " + subTextColor + "; -fx-letter-spacing: 1px;");
+
+        // 3. Search Field
+        searchField.setStyle(
+            FONT_SANS +
+            "-fx-background-color: " + fieldBg + ";" + 
+            "-fx-text-fill: " + textColor + ";" +
+            "-fx-prompt-text-fill: #999;" +
+            "-fx-background-radius: 12; -fx-padding: 12 15; -fx-font-size: 14px;"
+        );
+
+        // 4. Tombol Switch (FIX: Ubah warna text dan border)
+        switchBtn.setStyle(
+            FONT_SANS + 
+            "-fx-background-color: transparent;" + 
+            "-fx-text-fill: " + textColor + ";" + // Ikuti warna text (Putih/Hitam)
+            "-fx-font-weight: bold; -fx-cursor: hand;" +
+            "-fx-border-color: " + (isDark ? "#333" : "#E5E5EA") + ";" + // Border lebih gelap di dark mode
+            "-fx-border-radius: 15; -fx-padding: 5 10;"
+        );
+
+        // 5. Hasil Definisi
+        wordLabel.setStyle(FONT_SERIF + "-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: " + textColor + ";");
+        tagLabel.setStyle(FONT_SANS + "-fx-font-size: 12px; -fx-text-fill: " + bgColor + "; -fx-background-color: " + textColor + "; -fx-padding: 4 10; -fx-background-radius: 15;");
+        definitionLabel.setStyle(FONT_SANS + "-fx-font-size: 16px; -fx-text-fill: " + (isDark ? "#E0E0E0" : "#333333") + "; -fx-line-spacing: 4px;");
+        transLabel.setStyle(FONT_SERIF + "-fx-font-size: 18px; -fx-text-fill: " + subTextColor + "; -fx-font-style: italic;");
+
+        // 6. Container Suggestion (Hanya wadahnya)
+        suggestionBox.setStyle("-fx-background-color: " + cardBg + ";");
+        suggestionScroll.setStyle("-fx-background-color: " + cardBg + "; -fx-background: " + cardBg + "; -fx-border-color: transparent;");
+    }
+
 
     public static void main(String[] args) {
         launch();

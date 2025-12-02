@@ -1,83 +1,93 @@
-# Smart Dictionary & Data Structure Visualization
+# 📚 Smart Dictionary & Gimmick App
 
-**A robust English-Indonesian dictionary application featuring a custom Hash Map implementation with Red-Black Tree collision resolution.**
+<div align="center">
 
-This project serves as the Final Project for the **Data Structures** course. It demonstrates the practical application of advanced data structures by integrating a highly efficient backend storage system with a modern **JavaFX** graphical user interface.
+![Java](https://img.shields.io/badge/Java-21-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![JavaFX](https://img.shields.io/badge/JavaFX-23.0.1-4285F4?style=for-the-badge&logo=java&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-Build-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green.svg?style=for-the-badge)
 
-## 📋 Project Overview
+**Aplikasi Kamus Modern dengan Implementasi Struktur Data Red-Black Tree & Kejutan Interaktif.**
 
-Unlike standard dictionary applications that rely on built-in libraries, this project implements its own core data structures from scratch:
-* **RBHashMap**: A custom Hash Map implementation.
-* **Red-Black Tree Integration**: Instead of using standard Linked Lists for collision handling (Separate Chaining), this application utilizes **Red-Black Trees**. This ensures that even in worst-case collision scenarios, the time complexity for search operations remains **$O(\log N)$**, significantly outperforming the $O(N)$ complexity of traditional chaining.
+[View Demo] . [Report Bug] . [Request Feature]
 
-## ✨ Key Features
+</div>
 
-### 1. Efficient Word Lookup
-* Instant translation from English to Indonesian.
-* Optimized backend ensures rapid retrieval of definitions.
+---
 
-### 2. Advanced Data Structure Implementation
-* **Collision Handling**: Implements a self-balancing Binary Search Tree (Red-Black Tree) within each Hash Map bucket.
-* **Visualization**: The internal structure of the buckets and trees can be visualized in the console output for debugging and educational analysis.
+## 📖 Tentang Proyek
 
-### 3. Interactive "Gimmicks" (Easter Eggs)
-The application features a unique `GimmickLibrary` that triggers visual effects based on specific search queries, demonstrating dynamic UI manipulation in JavaFX.
+**Smart Dictionary** bukan sekadar aplikasi kamus biasa. Proyek ini dibangun sebagai Tugas Akhir mata kuliah **Struktur Data** untuk mendemonstrasikan implementasi struktur data pohon biner seimbang (*Self-Balancing Binary Search Tree*) dalam skenario dunia nyata.
 
-### 4. Integrated Utilities
-* **Mini Calculator**: A fully functional calculator tool built directly into the application ecosystem.
+Alih-alih menggunakan `java.util.HashMap` standar, proyek ini mengimplementasikan **Red-Black Tree (RBTree)** kustom dari nol untuk menangani penyimpanan data dan resolusi *collision*. Hal ini menjamin kompleksitas waktu pencarian tetap **O(log n)** bahkan dalam skenario terburuk, memberikan performa yang jauh lebih stabil dibandingkan Linked List pada Hash Map konvensional.
 
-## 🛠️ Tech Stack
+Dibalut dengan antarmuka **JavaFX** yang bersih dan modern (terinspirasi dari desain iOS), aplikasi ini juga dilengkapi dengan berbagai *"Easter Eggs"* (Gimmicks) dan aplikasi mini terintegrasi yang membuat pengalaman pengguna menjadi unik dan menghibur.
 
-* **Language**: Java 21
-* **GUI Framework**: JavaFX 23.0.1
-* **Build Tool**: Maven
-* **Architecture**: Modular design separating Data Structures (`RBTree`, `RBHashMap`) from UI Logic (`MainApp`, `GimmickLibrary`).
+## ✨ Fitur Utama
 
-## 🚀 Getting Started
+### 🧠 1. Advanced Data Structure (RBTree)
+Jantung dari aplikasi ini adalah `RBTree.java`.
+* **Custom Implementation:** Struktur data pohon merah-hitam yang ditulis manual.
+* **Efficient Lookup:** Pencarian kata dilakukan dengan menelusuri node pohon, bukan iterasi linear array.
+* **Auto-Balancing:** Otomatis menyeimbangkan diri (Rotate Left/Right, Recoloring) saat data baru dimasukkan.
 
-### Prerequisites
-Ensure you have the following installed:
-* **Java JDK 21** or higher.
-* **Maven** (for dependency management).
+### 🎨 2. Modern & Interactive UI
+* **Clean Aesthetic:** Desain minimalis hitam-putih dengan tipografi yang nyaman dibaca.
+* **Smart Search:** Fitur *Live Search* dengan *Debouncing* (menunggu pengguna selesai mengetik sebelum mencari) dan *Suggestion List* yang muncul otomatis.
+* **Dark Mode Support:** Dukungan penuh untuk tema gelap dan terang.
 
-### Installation & Execution
+### 🛠 3. Integrated Mini-Apps Suite
+Aplikasi ini bertindak sebagai "OS Mini" yang dapat meluncurkan alat lain:
+* **🧮 Mini Calculator:** Kalkulator fungsional dengan UI modern.
+* **📝 Mini Notepad:** Editor teks sederhana dengan fitur penyimpanan file (`.txt`).
+* **🎨 Mini Paint:** Kanvas digital untuk menggambar sketsa cepat.
 
-1.  **Clone the Repository**
+---
+
+## 🥚 Easter Eggs & Gimmicks
+
+Coba ketik kata kunci berikut di kolom pencarian untuk memicu efek rahasia!
+
+| Keyword (Input) | Efek / Respon | Kategori |
+| :--- | :--- | :--- |
+| `apel` | Menampilkan definisi standar buah apel. | 🟢 Normal |
+| `tong` / `barrel` | Aplikasi melakukan **Barrel Roll** (Putar 360°). | 🌀 Animasi |
+| `gempa` / `earthquake` | Layar bergetar hebat (**Shake Effect**). | 🫨 Animasi |
+| `hilang` / `lost` | Aplikasi perlahan menghilang (**Fade Out**). | 👻 Animasi |
+| `pesta` / `party` | Mode **Disco** (Lampu warna-warni & musik visual). | 🎉 Visual |
+| `hacker` | Menampilkan efek **Matrix Rain** (Kode hijau jatuh). | 💻 Visual |
+| `dvd` / `lama` | Menampilkan screensaver **DVD** yang memantul. | 📺 Visual |
+| `kecoa` / `jorok` | **PRANK!** Banyak kecoa muncul berjalan di layar. | 🪳 Prank |
+| `presiden` | Memutar audio spesial (`presiden.mp3`). | 🔊 Audio |
+| `kalkulator` | Membuka aplikasi **Mini Calculator**. | 🛠 Tools |
+| `catatan` / `python` | Membuka aplikasi **Mini Notepad**. | 🛠 Tools |
+| `gambar` | Membuka aplikasi **Mini Paint** (Canvas). | 🛠 Tools |
+| `gelap` | Mengaktifkan **Dark Mode**. | 🌙 Tema |
+| `terang` | Mengaktifkan **Light Mode**. | ☀️ Tema |
+
+---
+
+## ⚙️ Tech Stack
+
+* **Language:** [Java 21](https://www.oracle.com/java/technologies/downloads/#java21) (LTS)
+* **GUI Framework:** [JavaFX 23.0.1](https://openjfx.io/)
+* **Build Tool:** [Apache Maven](https://maven.apache.org/)
+* **Data Format:** JSON (Parsed using Jackson)
+
+## 🚀 Instalasi & Cara Menjalankan
+
+Pastikan Anda telah menginstal **JDK 21** atau yang lebih baru.
+
+1.  **Clone Repository**
     ```bash
-    git clone <repository-url>
-    cd <project-directory>
+    git clone [https://github.com/username/Smart-Dictionary-RBTree.git](https://github.com/username/Smart-Dictionary-RBTree.git)
+    cd Smart-Dictionary-RBTree
     ```
 
-2.  **Build and Run (via Maven)**
-    Execute the following command in your terminal:
+2.  **Build & Run (Menggunakan Maven)**
+    Jalankan perintah berikut di terminal root folder proyek:
     ```bash
     mvn clean javafx:run
     ```
 
-3.  **Run via IntelliJ IDEA**
-    * Open the project as a **Maven Project**.
-    * Locate `src/main/java/MainApp.java`.
-    * Right-click and select **Run 'MainApp'**.
-
-## 🎮 User Guide & Easter Eggs
-
-To test the application's unique features, try searching for the following keywords:
-
-| Keyword | Description | Effect |
-| :--- | :--- | :--- |
-| **`apel`** | Standard Search | Shows definition: "Buah berwarna merah". |
-| **`barrel`** | Visual Effect | Triggers a **360° Barrel Roll** animation on the UI. |
-| **`earthquake`** | Visual Effect | Simulates a **shake/quake** effect on the window. |
-| **`lost`** | Visual Effect | Causes the application interface to **fade out**. |
-| **`calculator`** | Tool | Launches the integrated **Mini Calculator**. |
-
-## 📂 Project Structure
-
-* **`RBHashMap.java`**: The core map implementation handling hashing and bucket management.
-* **`RBTree.java`**: The self-balancing tree implementation used for storing data within buckets.
-* **`GimmickLibrary.java`**: Contains the logic for JavaFX animations and transitions.
-* **`MainApp.java`**: The main entry point and UI controller.
-* **`GimmickApp.MiniCalculator.java`**: A separate JavaFX component for the calculator utility.
-
----
-*Developed by [Your Name/Team Name]*
+**Developed by Empat Trio Strukdeath Destroyer.**
