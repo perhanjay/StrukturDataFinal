@@ -7,13 +7,16 @@ public class RBTree {
     // Struktur Node (Disembunyikan di dalam Tree)
     private class Node {
         String key, value;
+        String foreignKey, foreignValue;
         Node left, right, parent;
         boolean color;
         Gimmick gimmick;
 
-        Node(String key, String value, Gimmick gimmick) {
+        Node(String key, String value, String foreignKey, String foreignValue, Gimmick gimmick) {
             this.key = key;
             this.value = value;
+            this.foreignKey = foreignKey;
+            this.foreignValue = foreignValue;
             this.color = RED;
             this.gimmick = gimmick;
         }
@@ -28,7 +31,7 @@ public class RBTree {
 
     public SearchResult get(String key){
         Node node = search(key);
-        return node != null ?  new SearchResult(node.value, node.gimmick) : null;
+        return node != null ?  new SearchResult(node.key, node.value, node.foreignKey, node.foreignValue, node.gimmick) : null;
     }
 
     // --- PUBLIC METHODS (Yang dipanggil oleh HashMap) ---
@@ -49,10 +52,10 @@ public class RBTree {
     }
 
     // 2. Memasukkan Data
-    public void insert(String key, String value, Gimmick gimmick) {
+    public void insert(String key, String value, String foreignKey, String foreignValue, Gimmick gimmick) {
         // Jika pohon kosong
         if (root == null) {
-            root = new Node(key, value, gimmick);
+            root = new Node(key, value, foreignKey, foreignValue,  gimmick);
             root.color = BLACK;
             return;
         }
@@ -70,7 +73,7 @@ public class RBTree {
             else current = current.right;
         }
 
-        Node newNode = new Node(key, value, gimmick);
+        Node newNode = new Node(key, value, foreignKey, foreignValue, gimmick);
         newNode.parent = parent;
         if (key.compareTo(parent.key) < 0) parent.left = newNode;
         else parent.right = newNode;

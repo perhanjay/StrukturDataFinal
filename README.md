@@ -77,7 +77,7 @@ To test the application's unique features, try searching for the following keywo
 * **`RBTree.java`**: The self-balancing tree implementation used for storing data within buckets.
 * **`GimmickLibrary.java`**: Contains the logic for JavaFX animations and transitions.
 * **`MainApp.java`**: The main entry point and UI controller.
-* **`MiniCalculator.java`**: A separate JavaFX component for the calculator utility.
+* **`GimmickApp.MiniCalculator.java`**: A separate JavaFX component for the calculator utility.
 
 ---
 *Developed by [Your Name/Team Name]*

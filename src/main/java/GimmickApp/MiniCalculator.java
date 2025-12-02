@@ -1,3 +1,5 @@
+package GimmickApp;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -5,8 +7,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 public class MiniCalculator extends VBox {
 
@@ -81,7 +81,7 @@ public class MiniCalculator extends VBox {
         btnEquals.setOnAction(e -> processKey("="));
         grid.add(btnEquals, 3, 2, 1, 3);
 
-        Button btnClose = new Button("Tutup");
+        Button btnClose = new Button("Close App");
         btnClose.setStyle("-fx-background-color: transparent; -fx-text-fill: #FF3B30; -fx-font-weight: bold; -fx-cursor: hand; -fx-font-size: 14px;");
         btnClose.setOnAction(e -> { if (onCloseRequest != null) onCloseRequest.run(); });
 
