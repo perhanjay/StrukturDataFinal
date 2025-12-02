@@ -128,7 +128,7 @@ public class MainApp extends Application {
         });
 
         Scene scene = new Scene(root, 400, 600);
-        stage.setTitle("Bahlil Anjing");
+        stage.setTitle("kamus Sakti");
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();

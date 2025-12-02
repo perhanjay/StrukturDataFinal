@@ -191,48 +191,6 @@ public class GimmickLibrary {
         tt.play();
     };
 
-    public static final Gimmick SHOW_BURUNG = (node) -> {
-        // Cek apakah node target adalah Pane (container)
-        if (!(node instanceof Pane)) return;
-        Pane root = (Pane) node;
-
-        try {
-            String imagePath = "/burung_kawin.png"; // Nama file di resources
-            
-            // Cek safety: apakah file ada?
-            if (GimmickLibrary.class.getResource(imagePath) == null) {
-                System.err.println("ERROR: Gambar " + imagePath + " tidak ditemukan di resources!");
-                return;
-            }
-
-            // 1. Muat Gambar
-            Image img = new Image(GimmickLibrary.class.getResourceAsStream(imagePath));
-            ImageView imageView = new ImageView(img);
-
-            // 2. Atur ukuran agar pas di layar 400x600
-            imageView.setFitWidth(380);  // Sedikit margin dari lebar 400
-            imageView.setPreserveRatio(true); // Jaga proporsi gambar agar tidak gepeng
-
-            // 3. Buat Container Overlay (Latar belakang gelap transparan)
-            StackPane overlayContainer = new StackPane(imageView);
-            overlayContainer.setStyle("-fx-background-color: rgba(0,0,0,0.8);"); // Hitam transparan 80%
-            overlayContainer.setPrefSize(400, 600); // Ukuran full window
-
-            // 4. Event: Klik gambar untuk menutupnya
-            overlayContainer.setOnMouseClicked(e -> {
-                root.getChildren().remove(overlayContainer);
-            });
-
-            // 5. Tampilkan (Tambahkan ke root paling atas)
-            root.getChildren().add(overlayContainer);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Gagal memuat gambar burung.");
-        }
-    };
-
-    // Implementasi GRAVITY yang REVERSIBLE (dapat kembali ke posisi awal)
 public static final Gimmick GRAVITY = (node) -> {
     // Memastikan targetNode adalah container (seperti Pane, VBox, dsb.)
     if (node instanceof Pane) {

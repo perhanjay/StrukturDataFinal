@@ -75,8 +75,8 @@
     "gimmick": "JUMPSCARE"
   },
   {
-    "word": "kucing",
-    "definition": "Kucing adalah mamalia karnivora dari famili Felidae, yang bisa berupa kucing domestik yang dipelihara manusia atau kucing besar seperti singa dan harimau. Kucing domestik (nama ilmiah: Felis catus) telah dijinakkan selama ribuan tahun dan dikenal sebagai salah satu hewan peliharaan paling populer di dunia karena perilakunya yang menggemaskan",
+    "word": "burung",
+    "definition": "Hewan bersayap yang bisa terbang.",
     "gimmick": "SHOW_BURUNG"
   },
   {
@@ -333,16 +333,6 @@
     "word": "close",
     "definition": "Tutup; menghalangi atau menutupi bukaan.",
     "gimmick": null
-  },
-  {
-  "word": "bahlil",
-  "definition": "anjing berbentuk manusia",
-  "gimmick": null
-},
-{
-  "word": "crot",
-  "definition": "ambatukam",
-  "gimmick": null
-}
+  }
 ]
   
