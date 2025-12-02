@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class RBTree {
 
     // Konstanta Warna
@@ -7,13 +9,16 @@ public class RBTree {
     // Struktur Node (Disembunyikan di dalam Tree)
     private class Node {
         String key, value;
+        String foreignKey, foreignValue;
         Node left, right, parent;
         boolean color;
         Gimmick gimmick;
 
-        Node(String key, String value, Gimmick gimmick) {
+        Node(String key, String value, String foreignKey, String foreignValue, Gimmick gimmick) {
             this.key = key;
             this.value = value;
+            this.foreignKey = foreignKey;
+            this.foreignValue = foreignValue;
             this.color = RED;
             this.gimmick = gimmick;
         }
@@ -26,15 +31,21 @@ public class RBTree {
         this.root = null;
     }
 
+    public SearchResult get(String key){
+        Node node = search(key);
+        return node != null ?  new SearchResult(node.key, node.value, node.foreignKey, node.foreignValue, node.gimmick) : null;
+    }
+
     // --- PUBLIC METHODS (Yang dipanggil oleh HashMap) ---
 
     // 1. Mencari Data
-    public SearchResult search(String key) {
+    public Node search(String key) {
         Node current = root;
         while (current != null) {
             int cmp = key.compareTo(current.key);
             if (cmp == 0) {
-                return new SearchResult(current.value, current.gimmick);
+//                return new SearchResult(current.value, current.gimmick);
+                return current;
             }
             else if (cmp < 0) current = current.left;
             else current = current.right;
@@ -43,10 +54,10 @@ public class RBTree {
     }
 
     // 2. Memasukkan Data
-    public void insert(String key, String value, Gimmick gimmick) {
+    public void insert(String key, String value, String foreignKey, String foreignValue, Gimmick gimmick) {
         // Jika pohon kosong
         if (root == null) {
-            root = new Node(key, value, gimmick);
+            root = new Node(key, value, foreignKey, foreignValue,  gimmick);
             root.color = BLACK;
             return;
         }
@@ -64,7 +75,7 @@ public class RBTree {
             else current = current.right;
         }
 
-        Node newNode = new Node(key, value, gimmick);
+        Node newNode = new Node(key, value, foreignKey, foreignValue, gimmick);
         newNode.parent = parent;
         if (key.compareTo(parent.key) < 0) parent.left = newNode;
         else parent.right = newNode;
@@ -162,26 +173,27 @@ public class RBTree {
         }
     }
 
-    public void collectSuggestions(String prefix, java.util.List<Suggestion> results, int limit) {
+    public void collectSuggestions(String prefix, List<Suggestion> results, int limit) {
         collectRecursive(root, prefix, results, limit);
     }
 
-    private void collectRecursive(Node node, String prefix, java.util.List<Suggestion> results, int limit) {
-        // Stop jika node kosong atau kuota hasil sudah penuh
+    private void collectRecursive(Node node, String prefix, List<Suggestion> results, int limit) {
+        // Berhenti jika node kosong atau kuota saran sudah terpenuhi (misal: 8 kata)
         if (node == null || results.size() >= limit) return;
 
-        // 1. Cek Kiri Dulu (In-Order Traversal agar urut abjad lokal)
+        // 1. Cek Anak Kiri Dulu (Agar urut abjad dari A-Z)
         collectRecursive(node.left, prefix, results, limit);
 
         // Cek lagi kuota setelah kembali dari kiri
         if (results.size() >= limit) return;
 
-        // 2. Cek Node Ini
-        if (node.key.startsWith(prefix)) {
+        // 2. Cek Node Ini: Apakah kuncinya diawali dengan teks pencarian?
+        // Kita gunakan toLowerCase() agar pencarian tidak sensitif huruf besar/kecil
+        if (node.key.toLowerCase().startsWith(prefix.toLowerCase())) {
             results.add(new Suggestion(node.key, node.value, node.gimmick));
         }
 
-        // 3. Cek Kanan
+        // 3. Cek Anak Kanan
         collectRecursive(node.right, prefix, results, limit);
     }
 }
