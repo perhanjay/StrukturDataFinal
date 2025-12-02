@@ -75,8 +75,274 @@
     "gimmick": "JUMPSCARE"
   },
   {
-    "word": "burung",
-    "definition": "Hewan bersayap yang bisa terbang (Klik gambar untuk menutup).",
+    "word": "kucing",
+    "definition": "Kucing adalah mamalia karnivora dari famili Felidae, yang bisa berupa kucing domestik yang dipelihara manusia atau kucing besar seperti singa dan harimau. Kucing domestik (nama ilmiah: Felis catus) telah dijinakkan selama ribuan tahun dan dikenal sebagai salah satu hewan peliharaan paling populer di dunia karena perilakunya yang menggemaskan",
     "gimmick": "SHOW_BURUNG"
-  }
+  },
+  {
+    "word": "gravitasi",
+    "definition": "Gaya tarik menarik antara dua benda yang memiliki massa.",
+    "gimmick": "GRAVITY"
+  },
+  {
+    "word": "apple",
+    "definition": "Apel; buah yang sering berwarna merah, bulat, dan manis.",
+    "gimmick": null
+  },
+  {
+    "word": "book",
+    "definition": "Buku; kumpulan kertas tertulis yang dijilid.",
+    "gimmick": null
+  },
+  {
+    "word": "chair",
+    "definition": "Kursi; perabot untuk duduk.",
+    "gimmick": null
+  },
+  {
+    "word": "table",
+    "definition": "Meja; perabot dengan permukaan datar yang didukung oleh kaki.",
+    "gimmick": null
+  },
+  {
+    "word": "house",
+    "definition": "Rumah; bangunan untuk tempat tinggal manusia.",
+    "gimmick": null
+  },
+  {
+    "word": "car",
+    "definition": "Mobil; kendaraan bermotor roda empat.",
+    "gimmick": null
+  },
+  {
+    "word": "dog",
+    "definition": "Anjing; hewan peliharaan dari jenis Canis familiaris.",
+    "gimmick": null
+  },
+  {
+    "word": "cat",
+    "definition": "Kucing; hewan peliharaan kecil yang berbulu.",
+    "gimmick": null
+  },
+  {
+    "word": "water",
+    "definition": "Air; cairan bening, tidak berasa, dan tidak berbau.",
+    "gimmick": null
+  },
+  {
+    "word": "fire",
+    "definition": "Api; panas dan cahaya yang dihasilkan dari pembakaran.",
+    "gimmick": null
+  },
+  {
+    "word": "sun",
+    "definition": "Matahari; bintang pusat tata surya.",
+    "gimmick": null
+  },
+  {
+    "word": "moon",
+    "definition": "Bulan; satelit alami bumi.",
+    "gimmick": null
+  },
+  {
+    "word": "star",
+    "definition": "Bintang; bola gas bercahaya besar di angkasa.",
+    "gimmick": null
+  },
+  {
+    "word": "tree",
+    "definition": "Pohon; tumbuhan berkayu yang tinggi dan besar.",
+    "gimmick": null
+  },
+  {
+    "word": "flower",
+    "definition": "Bunga; bagian tumbuhan yang berwarna dan biasanya harum.",
+    "gimmick": null
+  },
+  {
+    "word": "door",
+    "definition": "Pintu; penghalang bergerak pada bukaan dinding.",
+    "gimmick": null
+  },
+  {
+    "word": "window",
+    "definition": "Jendela; bukaan pada dinding yang ditutupi kaca.",
+    "gimmick": null
+  },
+  {
+    "word": "street",
+    "definition": "Jalan; jalur yang diaspal di antara dua baris bangunan.",
+    "gimmick": null
+  },
+  {
+    "word": "city",
+    "definition": "Kota; permukiman besar dan padat.",
+    "gimmick": null
+  },
+  {
+    "word": "country",
+    "definition": "Negara; wilayah atau bangsa dengan pemerintahan sendiri.",
+    "gimmick": null
+  },
+  {
+    "word": "time",
+    "definition": "Waktu; durasi yang diukur dalam jam, menit, dan detik.",
+    "gimmick": null
+  },
+  {
+    "word": "day",
+    "definition": "Hari; periode 24 jam.",
+    "gimmick": null
+  },
+  {
+    "word": "night",
+    "definition": "Malam; periode gelap antara matahari terbenam dan terbit.",
+    "gimmick": null
+  },
+  {
+    "word": "food",
+    "definition": "Makanan; zat yang dikonsumsi untuk memberi nutrisi.",
+    "gimmick": null
+  },
+  {
+    "word": "drink",
+    "definition": "Minuman; cairan yang dikonsumsi.",
+    "gimmick": null
+  },
+  {
+    "word": "pen",
+    "definition": "Pena; alat tulis dengan tinta.",
+    "gimmick": null
+  },
+  {
+    "word": "paper",
+    "definition": "Kertas; bahan tipis untuk menulis atau mencetak.",
+    "gimmick": null
+  },
+  {
+    "word": "money",
+    "definition": "Uang; alat tukar dan pembayaran.",
+    "gimmick": null
+  },
+  {
+    "word": "friend",
+    "definition": "Teman; seseorang yang dikenal dan disukai.",
+    "gimmick": null
+  },
+  {
+    "word": "family",
+    "definition": "Keluarga; kelompok orang yang terikat hubungan darah atau pernikahan.",
+    "gimmick": null
+  },
+  {
+    "word": "work",
+    "definition": "Pekerjaan; aktivitas yang dilakukan untuk tujuan tertentu.",
+    "gimmick": null
+  },
+  {
+    "word": "school",
+    "definition": "Sekolah; lembaga pendidikan formal.",
+    "gimmick": null
+  },
+  {
+    "word": "teacher",
+    "definition": "Guru; orang yang mengajar atau mendidik.",
+    "gimmick": null
+  },
+  {
+    "word": "student",
+    "definition": "Murid; orang yang belajar di sekolah.",
+    "gimmick": null
+  },
+  {
+    "word": "music",
+    "definition": "Musik; seni menata suara.",
+    "gimmick": null
+  },
+  {
+    "word": "movie",
+    "definition": "Film; rangkaian gambar bergerak untuk hiburan.",
+    "gimmick": null
+  },
+  {
+    "word": "game",
+    "definition": "Permainan; aktivitas hiburan dengan aturan.",
+    "gimmick": null
+  },
+  {
+    "word": "love",
+    "definition": "Cinta; perasaan kasih sayang yang mendalam.",
+    "gimmick": null
+  },
+  {
+    "word": "happy",
+    "definition": "Senang; merasa gembira dan puas.",
+    "gimmick": null
+  },
+  {
+    "word": "sad",
+    "definition": "Sedih; merasa tidak bahagia atau berduka.",
+    "gimmick": null
+  },
+  {
+    "word": "big",
+    "definition": "Besar; memiliki ukuran yang luas.",
+    "gimmick": null
+  },
+  {
+    "word": "small",
+    "definition": "Kecil; memiliki ukuran yang tidak luas.",
+    "gimmick": null
+  },
+  {
+    "word": "good",
+    "definition": "Baik; memiliki kualitas yang diinginkan.",
+    "gimmick": null
+  },
+  {
+    "word": "bad",
+    "definition": "Buruk; tidak memiliki kualitas yang diinginkan.",
+    "gimmick": null
+  },
+  {
+    "word": "run",
+    "definition": "Lari; bergerak dengan cepat menggunakan kaki.",
+    "gimmick": null
+  },
+  {
+    "word": "walk",
+    "definition": "Jalan; bergerak dengan kecepatan biasa menggunakan kaki.",
+    "gimmick": null
+  },
+  {
+    "word": "sleep",
+    "definition": "Tidur; keadaan istirahat alami yang dibutuhkan tubuh.",
+    "gimmick": null
+  },
+  {
+    "word": "wake",
+    "definition": "Bangun; keluar dari tidur.",
+    "gimmick": null
+  },
+  {
+    "word": "open",
+    "definition": "Buka; tidak tertutup atau terhalang.",
+    "gimmick": null
+  },
+  {
+    "word": "close",
+    "definition": "Tutup; menghalangi atau menutupi bukaan.",
+    "gimmick": null
+  },
+  {
+  "word": "bahlil",
+  "definition": "anjing berbentuk manusia",
+  "gimmick": null
+},
+{
+  "word": "crot",
+  "definition": "ambatukam",
+  "gimmick": null
+}
 ]
+  

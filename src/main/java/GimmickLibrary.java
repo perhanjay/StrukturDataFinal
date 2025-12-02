@@ -231,5 +231,60 @@ public class GimmickLibrary {
             System.err.println("Gagal memuat gambar burung.");
         }
     };
-    
+
+    // Implementasi GRAVITY yang REVERSIBLE (dapat kembali ke posisi awal)
+public static final Gimmick GRAVITY = (node) -> {
+    // Memastikan targetNode adalah container (seperti Pane, VBox, dsb.)
+    if (node instanceof Pane) {
+        Pane container = (Pane) node;
+
+        // Loop melalui semua elemen anak di dalam container
+        for (Node child : container.getChildren()) {
+            
+            // 1. Catat posisi Y awal elemen.
+            // Posisi awal = layoutY (posisi dalam parent) + translateY (offset animasi yang sudah ada)
+            final double originalY = child.getLayoutY() + child.getTranslateY();
+            
+            // Random rotasi saat jatuh
+            final double randomRotation = 360 + (Math.random() * 360);
+
+            // Kita menggunakan Timeline untuk mengurutkan animasi: Jatuh -> Tunda -> Kembali
+            Timeline timeline = new Timeline(
+                // KeyFrame 1: Posisi Awal (Waktu 0)
+                new KeyFrame(Duration.ZERO, 
+                    // Reset posisi Y dan rotasi (penting agar animasi dimulai dari posisi yang benar)
+                    new KeyValue(child.translateYProperty(), originalY),
+                    new KeyValue(child.rotateProperty(), 0.0)
+                ),
+                
+                // KeyFrame 2: Posisi Jatuh Maksimum (Waktu 1.0 detik)
+                new KeyFrame(Duration.seconds(1.0), 
+                    // Pindah ke bawah 1000.0px. EASE_IN memberikan efek percepatan gravitasi.
+                    new KeyValue(child.translateYProperty(), 1000.0, Interpolator.EASE_IN),
+                    new KeyValue(child.rotateProperty(), randomRotation)
+                ),
+                
+                // KeyFrame 3: Tunggu sebentar di bawah (Durasi 1.5 detik)
+                new KeyFrame(Duration.seconds(1.5)), 
+                
+                // KeyFrame 4: Kembali ke Posisi Awal (Waktu 2.0 detik)
+                new KeyFrame(Duration.seconds(2.0), 
+                    // Kembali ke originalY. EASE_OUT memberikan efek pantulan kecil.
+                    new KeyValue(child.translateYProperty(), originalY, Interpolator.EASE_OUT),
+                    new KeyValue(child.rotateProperty(), 0.0) // Kembali ke rotasi 0
+                )
+            );
+
+            timeline.play();
+
+            // Penting: Setelah semua selesai, pastikan rotasi di-reset ke nol
+            timeline.setOnFinished(e -> child.setRotate(0.0));
+        }
+    } else {
+        // Jika node adalah elemen tunggal
+        // Anda bisa menambahkan logika fall & reset untuk node tunggal di sini jika perlu.
+        System.out.println("Gimmick GRAVITY ditujukan untuk container Pane/VBox. Node tunggal diabaikan.");
+    }
+};
+
 }

@@ -10,6 +10,11 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.animation.Timeline;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Interpolator;
+import javafx.scene.layout.Pane;
 
 public class MainApp extends Application {
 
@@ -25,7 +30,7 @@ public class MainApp extends Application {
         // --- UI COMPONENTS ---
 
         // Header Title
-        Label titleLabel = new Label("Kamus Sakti");
+        Label titleLabel = new Label("Kamus Sakti Loh Yah😹");
         // Kita gunakan CSS untuk size & weight agar Font Family mengikuti Root
         titleLabel.setStyle("-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #333333;");
         titleLabel.setPadding(new Insets(0, 0, 5, 0));
@@ -46,7 +51,7 @@ public class MainApp extends Application {
         );
 
         // Tombol Cari
-        Button searchButton = new Button("Terjemahkan");
+        Button searchButton = new Button("Cari");
         searchButton.setDefaultButton(true);
         searchButton.setMaxWidth(Double.MAX_VALUE);
         
@@ -123,7 +128,7 @@ public class MainApp extends Application {
         });
 
         Scene scene = new Scene(root, 400, 600);
-        stage.setTitle("Kamus Sakti");
+        stage.setTitle("Bahlil Anjing");
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();

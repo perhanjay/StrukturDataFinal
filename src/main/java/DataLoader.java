@@ -62,6 +62,7 @@ public class DataLoader {
             case "JELLO":  return GimmickLibrary.JELLO;
             case "JUMPSCARE": return GimmickLibrary.JUMPSCARE;
             case "SHOW_BURUNG": return GimmickLibrary.SHOW_BURUNG;
+            case "GRAVITY": return GimmickLibrary.GRAVITY;
             default: return null; // Jika "NONE" atau typo, return null
         }
     }
